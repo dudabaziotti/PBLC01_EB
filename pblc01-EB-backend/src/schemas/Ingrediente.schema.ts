@@ -1,0 +1,80 @@
+const ingredienteSchema = {
+  type: 'object',
+  properties: {
+    idIngrediente:     { type: 'integer' },
+    nome:              { type: 'string' },
+    unidade:           { type: 'string' },
+    fonte:             { type: 'string' },
+    dataCadastro:      { type: 'string' },
+    fonteReferenciaId: { type: 'integer' },
+  },
+} as const;
+
+const ingredienteBodySchema = {
+  type: 'object',
+  required: ['nome', 'unidade', 'fonte', 'fonteReferenciaId'],
+  properties: {
+    nome:              { type: 'string' },
+    unidade:           { type: 'string' },
+    fonte:             { type: 'string' },
+    fonteReferenciaId: { type: 'integer' },
+  },
+} as const;
+
+const ingredienteIdParamsSchema = {
+  type: 'object',
+  required: ['id'],
+  properties: {
+    id: { type: 'string' },
+  },
+} as const;
+
+export const getIngredienteSchema = {
+  schema: {
+    tags: ['Ingredientes'],
+    summary: 'Lista todos os ingredientes',
+    security: [{ bearerAuth: [] }],
+    response: { 200: { type: 'array', items: ingredienteSchema } },
+  },
+};
+
+export const getIngredienteByIdSchema = {
+  schema: {
+    tags: ['Ingredientes'],
+    summary: 'Obtém um ingrediente pelo ID',
+    security: [{ bearerAuth: [] }],
+    params: ingredienteIdParamsSchema,
+    response: { 200: ingredienteSchema },
+  },
+};
+
+export const postIngredienteSchema = {
+  schema: {
+    tags: ['Ingredientes'],
+    summary: 'Cria um novo ingrediente',
+    security: [{ bearerAuth: [] }],
+    body: ingredienteBodySchema,
+    response: { 201: ingredienteSchema },
+  },
+};
+
+export const putIngredienteByIdSchema = {
+  schema: {
+    tags: ['Ingredientes'],
+    summary: 'Atualiza um ingrediente pelo ID',
+    security: [{ bearerAuth: [] }],
+    params: ingredienteIdParamsSchema,
+    body: ingredienteBodySchema,
+    response: { 200: ingredienteSchema },
+  },
+};
+
+export const deleteIngredienteByIdSchema = {
+  schema: {
+    tags: ['Ingredientes'],
+    summary: 'Remove um ingrediente pelo ID',
+    security: [{ bearerAuth: [] }],
+    params: ingredienteIdParamsSchema,
+    response: { 200: ingredienteSchema },
+  },
+};

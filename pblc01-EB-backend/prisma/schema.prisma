@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TipoUsuario {
+  USUARIO
+  PRODUTOR
+  ADMINISTRADOR
+}
+
+model Usuario {
+  idUsuario       Int            @id @default(autoincrement())
+  nome            String
+  email           String         @unique
+  senha           String
+  tipo            TipoUsuario
+  cnpj            String?
+  nomeEmpresa     String?
+  telefoneContato String?
+  nivelPrivilegio String?
+  fichas          FichaTecnica[] @relation("usuarioFicha")
+}
+
+model FonteReferencia {
+  id            Int           @id @default(autoincrement())
+  linkFonte     String
+  nomeFonte     String
+  anoPublicacao String
+  ingredientes  Ingrediente[] @relation("ingredienteFonte")
+}
+
+model MicroNutriente {
+  id            Int                @id @default(autoincrement())
+  nome          String
+  valor         Float
+  unidade       String
+  ingredienteId Int?
+  ingrediente   Ingrediente?       @relation("ingredienteMicro", fields: [ingredienteId], references: [idIngrediente])
+  tabelaId      Int?
+  tabela        TabelaNutricional? @relation("tabelaMicro", fields: [tabelaId], references: [idTabela])
+}
+
+model MedidaCaseira {
+  id                  Int                @id @default(autoincrement())
+  descricao           String
+  gramagemEquivalente Float
+  valor               Float
+  ingredienteId       Int?
+  ingrediente         Ingrediente?       @relation("ingredienteMedida", fields: [ingredienteId], references: [idIngrediente])
+  tabelaNutricional   TabelaNutricional? @relation("tabelaMedida")
+}
+
+model Ingrediente {
+  idIngrediente     Int              @id @default(autoincrement())
+  nome              String
+  unidade           String
+  fonte             String
+  dataCadastro      DateTime         @default(now())
+  fonteReferenciaId Int
+  fonteReferencia   FonteReferencia  @relation("ingredienteFonte", fields: [fonteReferenciaId], references: [id])
+  microNutrientes   MicroNutriente[] @relation("ingredienteMicro")
+  medidasCaseiras   MedidaCaseira[]  @relation("ingredienteMedida")
+  tabelas           TabelaNutricionalIngrediente[]
+  fichas            FichaTecnicaIngrediente[]
+}
+
+model Receita {
+  idReceita         Int           @id @default(autoincrement())
+  modoPreparo       String
+  tempoPreparo      Int
+  rendimentoPorcoes Int
+  fichaTecnica      FichaTecnica? @relation("fichaReceita")
+}
+
+model Rotulo {
+  idRotulo              Int           @id @default(autoincrement())
+  listaAlergenos        String
+  instrucoesConservacao String
+  validadeDias          Int
+  fichaTecnicaId        String?
+  fichaTecnica          FichaTecnica? @relation("fichaRotulo", fields: [fichaTecnicaId], references: [idFicha])
+}
+
+model TabelaNutricional {
+  idTabela        Int              @id @default(autoincrement())
+  dados           String
+  formato         String
+  medidaCaseiraId Int              @unique
+  medidaCaseira   MedidaCaseira    @relation("tabelaMedida", fields: [medidaCaseiraId], references: [id])
+  micronutrientes MicroNutriente[] @relation("tabelaMicro")
+  ingredientes    TabelaNutricionalIngrediente[]
+  fichaTecnicaId  String?
+  fichaTecnica    FichaTecnica?    @relation("fichaTabela", fields: [fichaTecnicaId], references: [idFicha])
+}
+
+model TabelaNutricionalIngrediente {
+  tabelaId      Int
+  tabela        TabelaNutricional @relation(fields: [tabelaId], references: [idTabela])
+  ingredienteId Int
+  ingrediente   Ingrediente       @relation(fields: [ingredienteId], references: [idIngrediente])
+  @@id([tabelaId, ingredienteId])
+  @@map("TabelaNutricionalIngrediente")
+}
+
+model FichaTecnica {
+  idFicha       String   @id
+  nomeReceita   String
+  autor         String
+  pesoTotal     Float
+  tamanhoPorcao Float
+  formatos      String[]
+  receitaId     Int      @unique
+  receita       Receita  @relation("fichaReceita", fields: [receitaId], references: [idReceita])
+  ingredientes  FichaTecnicaIngrediente[]
+  tabelas       TabelaNutricional[] @relation("fichaTabela")
+  rotulos       Rotulo[]            @relation("fichaRotulo")
+  usuarioId     Int?
+  usuario       Usuario? @relation("usuarioFicha", fields: [usuarioId], references: [idUsuario])
+}
+
+model FichaTecnicaIngrediente {
+  fichaId       String
+  ficha         FichaTecnica @relation(fields: [fichaId], references: [idFicha])
+  ingredienteId Int
+  ingrediente   Ingrediente  @relation(fields: [ingredienteId], references: [idIngrediente])
+  @@id([fichaId, ingredienteId])
+  @@map("FichaTecnicaIngrediente")
+}
