@@ -12,7 +12,7 @@ const ROTAS = [
   { label: 'Fichas Técnicas', path: '/fichas' },
 ];
 
-import logoNutriStack from '../../public/orange-svgrepo-com.svg';
+import logoNutriStack from '../assets/orange-svgrepo-com.svg';
 
 export default function Header() {
   const navigate = useNavigate();

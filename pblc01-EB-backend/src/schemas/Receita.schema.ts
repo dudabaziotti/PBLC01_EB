@@ -1,20 +1,34 @@
+const receitaIngredienteSchema = {
+  type: 'object',
+  required: ['ingredienteId', 'quantidade'],
+  properties: {
+    ingredienteId: { type: 'integer' },
+    quantidade: { type: 'number' },
+  },
+} as const;
+
+
 const receitaSchema = {
   type: 'object',
   properties: {
     idReceita:         { type: 'integer' },
+    nome:              { type: 'string' },
     modoPreparo:       { type: 'string' },
     tempoPreparo:      { type: 'integer' },
     rendimentoPorcoes: { type: 'integer' },
+    ingredientes:      { type: 'array', items: receitaIngredienteSchema },
   },
 } as const;
 
 const receitaBodySchema = {
   type: 'object',
-  required: ['modoPreparo', 'tempoPreparo', 'rendimentoPorcoes'],
+  required: ['nome', 'modoPreparo', 'tempoPreparo', 'rendimentoPorcoes', 'ingredientes'],
   properties: {
+    nome:              { type: 'string' },
     modoPreparo:       { type: 'string' },
     tempoPreparo:      { type: 'integer' },
     rendimentoPorcoes: { type: 'integer' },
+    ingredientes:      { type: 'array', items: receitaIngredienteSchema },
   },
 } as const;
 

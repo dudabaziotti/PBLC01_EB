@@ -3,6 +3,7 @@ const ingredienteSchema = {
   properties: {
     idIngrediente:     { type: 'integer' },
     nome:              { type: 'string' },
+    quantidade:        { type: 'number' },
     unidade:           { type: 'string' },
     fonte:             { type: 'string' },
     dataCadastro:      { type: 'string' },
@@ -12,9 +13,10 @@ const ingredienteSchema = {
 
 const ingredienteBodySchema = {
   type: 'object',
-  required: ['nome', 'unidade', 'fonte', 'fonteReferenciaId'],
+  required: ['nome', 'quantidade', 'unidade', 'fonte', 'fonteReferenciaId'],
   properties: {
     nome:              { type: 'string' },
+    quantidade:        { type: 'number' },
     unidade:           { type: 'string' },
     fonte:             { type: 'string' },
     fonteReferenciaId: { type: 'integer' },

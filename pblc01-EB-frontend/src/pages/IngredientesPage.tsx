@@ -9,6 +9,11 @@ const UNIDADES = ['g', 'kg', 'ml', 'l', 'unidade', 'porção'] as const;
 
 const schema = yup.object({
   nome: yup.string().required('O nome é obrigatório').min(2, 'Mínimo 2 caracteres'),
+  quantidade: yup
+    .number()
+    .typeError('Informe um valor numérico válido')
+    .positive('A quantidade deve ser maior que zero')
+    .required('A quantidade é obrigatória'),
   unidade: yup.string().oneOf(UNIDADES, 'Selecione uma unidade').required('A unidade é obrigatória'),
   fonte: yup.string().required('A fonte é obrigatória'),
   fonteReferenciaId: yup
@@ -21,6 +26,7 @@ const schema = yup.object({
 
 const defaultValues = {
   nome: '',
+  quantidade: '',
   unidade: '',
   fonte: '',
   fonteReferenciaId: '',
@@ -48,9 +54,10 @@ export default function IngredientesPage() {
       idField="idIngrediente"
       schema={schema}
       defaultValues={defaultValues}
-      transformBeforeSubmit={(data) => ({ ...data, fonteReferenciaId: Number(data.fonteReferenciaId) })}
+      transformBeforeSubmit={(data) => ({ ...data, fonteReferenciaId: Number(data.fonteReferenciaId), quantidade: Number(data.quantidade) })}
       columns={[
         { field: 'nome', label: 'Nome' },
+        { field: 'quantidade', label: 'Quantidade' },
         { field: 'unidade', label: 'Unidade' },
         { field: 'fonte', label: 'Fonte' },
       ]}
@@ -78,6 +85,21 @@ export default function IngredientesPage() {
                 </Select>
                 {errors.unidade && <FormHelperText>{errors.unidade.message as string}</FormHelperText>}
               </FormControl>
+            )}
+          />
+          <Controller
+            name="quantidade"
+            control={control}
+            render={({ field }) => (
+              <TextField 
+                {...field} 
+                label="Quantidade" 
+                type="number"
+                slotProps={{ htmlInput: { step: 'any' } }}
+                error={!!errors.quantidade} 
+                helperText={errors.quantidade?.message as string} 
+                fullWidth 
+              />
             )}
           />
           <Controller

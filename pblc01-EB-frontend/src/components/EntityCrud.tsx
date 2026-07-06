@@ -41,6 +41,7 @@ interface EntityCrudProps<T extends Record<string, any>> {
   defaultValues: Record<string, any>;
   renderFields: (form: ReturnType<typeof useForm>, ctx: { isEditing: boolean }) => React.ReactNode;
   transformBeforeSubmit?: (data: any) => any;
+  transformOnEdit?: (data: any) => any;
 }
 
 export default function EntityCrud<T extends Record<string, any>>({
@@ -52,6 +53,7 @@ export default function EntityCrud<T extends Record<string, any>>({
   defaultValues,
   renderFields,
   transformBeforeSubmit,
+  transformOnEdit,
 }: EntityCrudProps<T>) {
   const [items, setItems] = useState<T[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -93,11 +95,15 @@ export default function EntityCrud<T extends Record<string, any>>({
 
   const abrirEditar = (row: T) => {
     setEditando(row);
-    const dadosTratados = { ...defaultValues };
+    let dadosTratados = { ...defaultValues };
     Object.keys(row).forEach((key) => {
       // Se o valor vindo do banco for estritamente 'null', substitui pelo valor padrão (geralmente '')
       dadosTratados[key] = row[key] === null ? (defaultValues[key] ?? '') : row[key];
     });
+
+    if (transformOnEdit) {
+      dadosTratados = transformOnEdit(dadosTratados);
+    }
 
     form.reset(dadosTratados as any);      
     setView('form');

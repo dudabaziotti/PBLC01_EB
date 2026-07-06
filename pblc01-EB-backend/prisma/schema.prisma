@@ -58,6 +58,7 @@ model MedidaCaseira {
 model Ingrediente {
   idIngrediente     Int              @id @default(autoincrement())
   nome              String
+  quantidade        Float
   unidade           String
   fonte             String
   dataCadastro      DateTime         @default(now())
@@ -67,14 +68,27 @@ model Ingrediente {
   medidasCaseiras   MedidaCaseira[]  @relation("ingredienteMedida")
   tabelas           TabelaNutricionalIngrediente[]
   fichas            FichaTecnicaIngrediente[]
+  receitas          ReceitaIngrediente[]
 }
 
 model Receita {
-  idReceita         Int           @id @default(autoincrement())
+  idReceita         Int                  @id @default(autoincrement())
+  nome              String
   modoPreparo       String
   tempoPreparo      Int
   rendimentoPorcoes Int
-  fichaTecnica      FichaTecnica? @relation("fichaReceita")
+  fichaTecnica      FichaTecnica?        @relation("fichaReceita")
+  ingredientes      ReceitaIngrediente[]
+}
+
+model ReceitaIngrediente {
+  idReceita     Int
+  idIngrediente Int
+  quantidade    Float
+  receita       Receita     @relation(fields: [idReceita], references: [idReceita], onDelete: Cascade)
+  ingrediente   Ingrediente @relation(fields: [idIngrediente], references: [idIngrediente], onDelete: Cascade)
+
+  @@id([idReceita, idIngrediente])
 }
 
 model Rotulo {

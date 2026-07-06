@@ -11,19 +11,19 @@ async function main() {
   });
 
   const farinha = await prisma.ingrediente.create({
-    data: { nome: 'Farinha de trigo', unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { nome: 'Farinha de trigo', quantidade: 100, unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
   });
   const acucar = await prisma.ingrediente.create({
-    data: { nome: 'Açúcar refinado', unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { nome: 'Açúcar refinado', quantidade: 100, unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
   });
   const manteiga = await prisma.ingrediente.create({
-    data: { nome: 'Manteiga', unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { nome: 'Manteiga', quantidade: 100, unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
   });
   const ovo = await prisma.ingrediente.create({
-    data: { nome: 'Ovo de galinha', unidade: 'unidade', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { nome: 'Ovo de galinha', quantidade: 1, unidade: 'unidade', fonte: 'TACO', fonteReferenciaId: taco.id },
   });
   const leite = await prisma.ingrediente.create({
-    data: { nome: 'Leite integral', unidade: 'ml', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { nome: 'Leite integral', quantidade: 100, unidade: 'ml', fonte: 'TACO', fonteReferenciaId: taco.id },
   });
 
   const xicara = await prisma.medidaCaseira.create({
@@ -62,10 +62,37 @@ async function main() {
   });
 
   const receitaBolo = await prisma.receita.create({
-    data: { modoPreparo: 'Misture os ingredientes secos. Adicione ovos e manteiga. Leve ao forno a 180°C por 35 minutos.', tempoPreparo: 50, rendimentoPorcoes: 10 },
+    data: {
+      nome: 'Bolo de baunilha',
+      modoPreparo: 'Misture os ingredientes secos. Adicione ovos e manteiga. Leve ao forno a 180°C por 35 minutos.',
+      tempoPreparo: 50,
+      rendimentoPorcoes: 10,
+      ingredientes: {
+        create: [
+          { idIngrediente: farinha.idIngrediente, quantidade: 250 },
+          { idIngrediente: acucar.idIngrediente, quantidade: 200 },
+          { idIngrediente: manteiga.idIngrediente, quantidade: 100 },
+          { idIngrediente: ovo.idIngrediente, quantidade: 3 },
+          { idIngrediente: leite.idIngrediente, quantidade: 200 }
+        ]
+      }
+    },
   });
+
   const receitaBiscoito = await prisma.receita.create({
-    data: { modoPreparo: 'Misture farinha, açúcar e manteiga até obter uma massa homogênea. Modele e asse a 160°C por 20 minutos.', tempoPreparo: 35, rendimentoPorcoes: 20 },
+    data: {
+      nome: 'Biscoito amanteigado',
+      modoPreparo: 'Misture farinha, açúcar e manteiga até obter uma massa homogênea. Modele e asse a 160°C por 20 minutos.',
+      tempoPreparo: 35,
+      rendimentoPorcoes: 20,
+      ingredientes: {
+        create: [
+          { idIngrediente: farinha.idIngrediente, quantidade: 150 },
+          { idIngrediente: acucar.idIngrediente, quantidade: 80 },
+          { idIngrediente: manteiga.idIngrediente, quantidade: 100 }
+        ]
+      }
+    },
   });
 
   const fichaBolo = await prisma.fichaTecnica.create({

@@ -65,6 +65,7 @@ const defaultValues = {
 
 interface ReceitaOption {
   idReceita: number;
+  nome: string;
   modoPreparo: string;
 }
 interface UsuarioOption {
@@ -101,7 +102,7 @@ export default function FichasTecnicasPage() {
         { field: 'autor', label: 'Autor' },
         { field: 'pesoTotal', label: 'Peso Total (g)' },
       ]}
-      renderFields={({ control, watch, formState: { errors } }: any, { isEditing }: { isEditing: boolean }) => {
+      renderFields={({ control, watch, setValue, formState: { errors } }: any, { isEditing }: { isEditing: boolean }) => {
         const formatosSelecionados: string[] = watch('formatos') ?? [];
         return (
           <>
@@ -119,13 +120,38 @@ export default function FichasTecnicasPage() {
                 />
               )}
             />
+
             <Controller
               name="nomeReceita"
               control={control}
               render={({ field }) => (
-                <TextField {...field} label="Nome da Receita" error={!!errors.nomeReceita} helperText={errors.nomeReceita?.message as string} fullWidth />
+                <FormControl fullWidth error={!!errors.nomeReceita}>
+                  <InputLabel>Nome da Receita</InputLabel>
+                  <Select 
+                    {...field} 
+                    label="Nome da Receita"
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      const receitaCorrespondente = receitas.find(r => r.nome === e.target.value);
+                      if (receitaCorrespondente) {
+                        setValue('receitaId', receitaCorrespondente.idReceita, { shouldValidate: true });
+                      }
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>Selecione...</em>
+                    </MenuItem>
+                    {receitas.map((r) => (
+                      <MenuItem key={r.idReceita} value={r.nome}>
+                        {r.nome}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.nomeReceita && <FormHelperText>{errors.nomeReceita.message as string}</FormHelperText>}
+                </FormControl>
               )}
             />
+
             <Controller
               name="autor"
               control={control}
@@ -147,19 +173,30 @@ export default function FichasTecnicasPage() {
                 <TextField {...field} label="Tamanho da Porção (g)" type="number" error={!!errors.tamanhoPorcao} helperText={errors.tamanhoPorcao?.message as string} fullWidth />
               )}
             />
+
             <Controller
               name="receitaId"
               control={control}
               render={({ field }) => (
                 <FormControl fullWidth error={!!errors.receitaId}>
-                  <InputLabel>Receita</InputLabel>
-                  <Select {...field} label="Receita">
+                  <InputLabel>Receita ID</InputLabel>
+                  <Select 
+                    {...field} 
+                    label="Receita ID"
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      const receitaCorrespondente = receitas.find(r => r.idReceita === Number(e.target.value));
+                      if (receitaCorrespondente) {
+                        setValue('nomeReceita', receitaCorrespondente.nome, { shouldValidate: true });
+                      }
+                    }}
+                  >
                     <MenuItem value="">
                       <em>Selecione...</em>
                     </MenuItem>
                     {receitas.map((r) => (
                       <MenuItem key={r.idReceita} value={r.idReceita}>
-                        #{r.idReceita} - {r.modoPreparo.slice(0, 40)}...
+                        #{r.idReceita} - {r.nome}
                       </MenuItem>
                     ))}
                   </Select>
@@ -167,6 +204,7 @@ export default function FichasTecnicasPage() {
                 </FormControl>
               )}
             />
+
             <Controller
               name="usuarioId"
               control={control}

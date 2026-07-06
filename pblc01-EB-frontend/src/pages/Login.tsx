@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import api from '../api/axios';
 
+import logoNutriStack from '../assets/painel-logo-img.jpeg';
+
 export default function Login() {
   const { setToken } = useAuth();
   const navigate = useNavigate();
@@ -89,12 +91,20 @@ export default function Login() {
             mb: 2,
             position: 'relative',
             zIndex: 1,
-            fontWeight: 800,
-            fontSize: '1.6rem',
-            color: '#ff8832',
+            overflow: 'hidden',
           }}
         >
-          NS
+          <Box
+            component="img"
+            src={logoNutriStack}
+            alt="NutriStack"
+            sx={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transform: 'scale(1.5) translateX(1.5px)',
+            }}
+          />
         </Box>
 
         <Typography sx={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.3px', mb: 3, position: 'relative', zIndex: 1 }}>
