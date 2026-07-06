@@ -1,3 +1,16 @@
+import type { FastifyInstance } from 'fastify';
+
+const ingredienteMicronutrienteSchema = {
+  type: 'object',
+  required: ['nome', 'valor', 'unidade'],
+  properties: {
+    id: { type: 'integer' },
+    nome: { type: 'string' },
+    valor: { type: 'number' },
+    unidade: { type: 'string' },
+  },
+} as const;
+
 const ingredienteSchema = {
   type: 'object',
   properties: {
@@ -8,18 +21,20 @@ const ingredienteSchema = {
     fonte:             { type: 'string' },
     dataCadastro:      { type: 'string' },
     fonteReferenciaId: { type: 'integer' },
+    microNutrientes:   { type: 'array', items: ingredienteMicronutrienteSchema },
   },
 } as const;
 
 const ingredienteBodySchema = {
   type: 'object',
-  required: ['nome', 'quantidade', 'unidade', 'fonte', 'fonteReferenciaId'],
+  required: ['nome', 'quantidade', 'unidade', 'fonte', 'fonteReferenciaId', 'micronutrientes'],
   properties: {
     nome:              { type: 'string' },
     quantidade:        { type: 'number' },
     unidade:           { type: 'string' },
     fonte:             { type: 'string' },
     fonteReferenciaId: { type: 'integer' },
+    micronutrientes:   { type: 'array', items: ingredienteMicronutrienteSchema },
   },
 } as const;
 

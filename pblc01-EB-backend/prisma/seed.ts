@@ -11,19 +11,108 @@ async function main() {
   });
 
   const farinha = await prisma.ingrediente.create({
-    data: { nome: 'Farinha de trigo', quantidade: 100, unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { 
+      nome: 'Farinha de trigo', 
+      quantidade: 100, 
+      unidade: 'g', 
+      fonte: 'TACO', 
+      fonteReferenciaId: taco.id,
+      microNutrientes: {
+        create: [
+          { nome: 'Cálcio',     valor: 18,  unidade: 'mg' },
+          { nome: 'Ferro',      valor: 1.4, unidade: 'mg' },
+          { nome: 'Sódio',      valor: 0,   unidade: 'mg' },
+          { nome: 'Potássio',   valor: 0,   unidade: 'mg' },
+          { nome: 'Vitamina A', valor: 0,   unidade: 'mcg' },
+          { nome: 'Vitamina D', valor: 0,   unidade: 'mcg' },
+          { nome: 'Vitamina B2',valor: 0,   unidade: 'mg' },
+        ]
+      }
+    },
   });
+
   const acucar = await prisma.ingrediente.create({
-    data: { nome: 'Açúcar refinado', quantidade: 100, unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { 
+      nome: 'Açúcar refinado', 
+      quantidade: 100, 
+      unidade: 'g', 
+      fonte: 'TACO', 
+      fonteReferenciaId: taco.id,
+      microNutrientes: {
+        create: [
+          { nome: 'Cálcio',     valor: 0,   unidade: 'mg' },
+          { nome: 'Ferro',      valor: 0,   unidade: 'mg' },
+          { nome: 'Sódio',      valor: 1,   unidade: 'mg' },
+          { nome: 'Potássio',   valor: 2,   unidade: 'mg' },
+          { nome: 'Vitamina A', valor: 0,   unidade: 'mcg' },
+          { nome: 'Vitamina D', valor: 0,   unidade: 'mcg' },
+          { nome: 'Vitamina B2',valor: 0,   unidade: 'mg' },
+        ]
+      }
+    },
   });
+
   const manteiga = await prisma.ingrediente.create({
-    data: { nome: 'Manteiga', quantidade: 100, unidade: 'g', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { 
+      nome: 'Manteiga', 
+      quantidade: 100, 
+      unidade: 'g', 
+      fonte: 'TACO', 
+      fonteReferenciaId: taco.id,
+      microNutrientes: {
+        create: [
+          { nome: 'Cálcio',     valor: 7,   unidade: 'mg' },
+          { nome: 'Ferro',      valor: 0,   unidade: 'mg' },
+          { nome: 'Sódio',      valor: 0,   unidade: 'mg' },
+          { nome: 'Potássio',   valor: 0,   unidade: 'mg' },
+          { nome: 'Vitamina A', valor: 754, unidade: 'mcg' },
+          { nome: 'Vitamina D', valor: 0,   unidade: 'mcg' },
+          { nome: 'Vitamina B2',valor: 0,   unidade: 'mg' },
+        ]
+      }
+    },
   });
+
   const ovo = await prisma.ingrediente.create({
-    data: { nome: 'Ovo de galinha', quantidade: 1, unidade: 'unidade', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { 
+      nome: 'Ovo de galinha', 
+      quantidade: 1, 
+      unidade: 'unidade', 
+      fonte: 'TACO', 
+      fonteReferenciaId: taco.id,
+      microNutrientes: {
+        create: [
+          { nome: 'Cálcio',     valor: 0,   unidade: 'mg' },
+          { nome: 'Ferro',      valor: 1.8, unidade: 'mg' },
+          { nome: 'Sódio',      valor: 0,   unidade: 'mg' },
+          { nome: 'Potássio',   valor: 0,   unidade: 'mg' },
+          { nome: 'Vitamina A', valor: 0,   unidade: 'mcg' },
+          { nome: 'Vitamina D', valor: 2.0, unidade: 'mcg' },
+          { nome: 'Vitamina B2',valor: 0,   unidade: 'mg' },
+        ]
+      }
+    },
   });
+
   const leite = await prisma.ingrediente.create({
-    data: { nome: 'Leite integral', quantidade: 100, unidade: 'ml', fonte: 'TACO', fonteReferenciaId: taco.id },
+    data: { 
+      nome: 'Leite integral', 
+      quantidade: 100, 
+      unidade: 'ml', 
+      fonte: 'TACO', 
+      fonteReferenciaId: taco.id,
+      microNutrientes: {
+        create: [
+          { nome: 'Cálcio',     valor: 123, unidade: 'mg' },
+          { nome: 'Ferro',      valor: 0,   unidade: 'mg' },
+          { nome: 'Sódio',      valor: 0,   unidade: 'mg' },
+          { nome: 'Potássio',   valor: 0,   unidade: 'mg' },
+          { nome: 'Vitamina A', valor: 0,   unidade: 'mcg' },
+          { nome: 'Vitamina D', valor: 0,   unidade: 'mcg' },
+          { nome: 'Vitamina B2',valor: 0.2, unidade: 'mg' },
+        ]
+      }
+    },
   });
 
   const xicara = await prisma.medidaCaseira.create({

@@ -25,6 +25,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import type { ObjectSchema } from 'yup';
 import Header from './Header';
 import api from '../api/axios';
+import { useAuth } from '../auth/AuthContext';
 
 export interface EntityColumn<T> {
   field: keyof T;
@@ -42,6 +43,7 @@ interface EntityCrudProps<T extends Record<string, any>> {
   renderFields: (form: ReturnType<typeof useForm>, ctx: { isEditing: boolean }) => React.ReactNode;
   transformBeforeSubmit?: (data: any) => any;
   transformOnEdit?: (data: any) => any;
+  adminOnly?: boolean;
 }
 
 export default function EntityCrud<T extends Record<string, any>>({
@@ -54,7 +56,11 @@ export default function EntityCrud<T extends Record<string, any>>({
   renderFields,
   transformBeforeSubmit,
   transformOnEdit,
+  adminOnly = false,
 }: EntityCrudProps<T>) {
+  const { usuario } = useAuth();
+  const podeAlterar = adminOnly ? usuario?.tipo === 'ADMINISTRADOR' : true;
+
   const [items, setItems] = useState<T[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
@@ -88,12 +94,14 @@ export default function EntityCrud<T extends Record<string, any>>({
   }, [apiPath]);
 
   const abrirCriar = () => {
+    if (!podeAlterar) return;
     setEditando(null);
     form.reset(defaultValues);
     setView('form');
   };
 
   const abrirEditar = (row: T) => {
+    if (!podeAlterar) return;
     setEditando(row);
     let dadosTratados = { ...defaultValues };
     Object.keys(row).forEach((key) => {
@@ -105,7 +113,7 @@ export default function EntityCrud<T extends Record<string, any>>({
       dadosTratados = transformOnEdit(dadosTratados);
     }
 
-    form.reset(dadosTratados as any);      
+    form.reset(dadosTratados as any);
     setView('form');
   };
 
@@ -115,6 +123,7 @@ export default function EntityCrud<T extends Record<string, any>>({
   };
 
   const onSubmit = async (data: any) => {
+    if (!podeAlterar) return;
     const payload = transformBeforeSubmit ? transformBeforeSubmit(data) : data;
     try {
       if (editando) {
@@ -134,6 +143,7 @@ export default function EntityCrud<T extends Record<string, any>>({
   };
 
   const excluir = async () => {
+    if (!podeAlterar) return;
     if (excluindoId === null) return;
     try {
       await api.delete(`${apiPath}/${excluindoId}`);
@@ -251,19 +261,21 @@ export default function EntityCrud<T extends Record<string, any>>({
           </Alert>
         </Collapse>
 
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button
-            variant="contained"
-            onClick={abrirCriar}
-            sx={{
-              background: 'linear-gradient(135deg, #ff8832 0%, #ea580c 100%)',
-              boxShadow: '0 8px 16px -4px rgba(249,115,22,0.25)',
-              px: 3,
-            }}
-          >
-            + Novo
-          </Button>
-        </Box>
+        {podeAlterar && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+            <Button
+              variant="contained"
+              onClick={abrirCriar}
+              sx={{
+                background: 'linear-gradient(135deg, #ff8832 0%, #ea580c 100%)',
+                boxShadow: '0 8px 16px -4px rgba(249,115,22,0.25)',
+                px: 3,
+              }}
+            >
+              + Novo
+            </Button>
+          </Box>
+        )}
 
         {carregando ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -279,15 +291,17 @@ export default function EntityCrud<T extends Record<string, any>>({
                       {col.label}
                     </TableCell>
                   ))}
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
-                    Ações
-                  </TableCell>
+                  {podeAlterar && (
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>
+                      Ações
+                    </TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {items.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={columns.length + 1} align="center">
+                    <TableCell colSpan={columns.length + (podeAlterar ? 1 : 0)} align="center">
                       Nenhum registro encontrado.
                     </TableCell>
                   </TableRow>
@@ -299,14 +313,16 @@ export default function EntityCrud<T extends Record<string, any>>({
                         {col.render ? col.render(row) : String(row[col.field] ?? '')}
                       </TableCell>
                     ))}
-                    <TableCell align="right">
-                      <IconButton sx={{ color: 'primary.main' }} onClick={() => abrirEditar(row)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton sx={{ color: '#ef4444' }} onClick={() => setExcluindoId(row[idField])}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
+                    {podeAlterar && (
+                      <TableCell align="right">
+                        <IconButton sx={{ color: 'primary.main' }} onClick={() => abrirEditar(row)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton sx={{ color: '#ef4444' }} onClick={() => setExcluindoId(row[idField])}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
@@ -319,33 +335,35 @@ export default function EntityCrud<T extends Record<string, any>>({
         </Typography>
       </Container>
 
-      <Collapse in={excluindoId !== null}>
-        <Box
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            bgcolor: 'background.paper',
-            border: '1px solid #f87171',
-            borderRadius: 2,
-            p: 2,
-            boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            zIndex: 1300,
-          }}
-        >
-          <Typography variant="body2">Confirma a exclusão deste registro?</Typography>
-          <Button size="small" onClick={() => setExcluindoId(null)}>
-            Cancelar
-          </Button>
-          <Button size="small" variant="contained" color="error" onClick={excluir}>
-            Excluir
-          </Button>
-        </Box>
-      </Collapse>
+      {podeAlterar && (
+        <Collapse in={excluindoId !== null}>
+          <Box
+            sx={{
+              position: 'fixed',
+              bottom: 24,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              bgcolor: 'background.paper',
+              border: '1px solid #f87171',
+              borderRadius: 2,
+              p: 2,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              zIndex: 1300,
+            }}
+          >
+            <Typography variant="body2">Confirma a exclusão deste registro?</Typography>
+            <Button size="small" onClick={() => setExcluindoId(null)}>
+              Cancelar
+            </Button>
+            <Button size="small" variant="contained" color="error" onClick={excluir}>
+              Excluir
+            </Button>
+          </Box>
+        </Collapse>
+      )}
 
       <Snackbar open={!!erro} autoHideDuration={4000} onClose={() => setErro('')}>
         <Alert severity="error" onClose={() => setErro('')}>

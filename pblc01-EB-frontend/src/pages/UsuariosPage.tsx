@@ -38,20 +38,20 @@ export default function UsuariosPage() {
       idField="idUsuario"
       schema={schema}
       defaultValues={defaultValues}
-
+      adminOnly={true}
       transformBeforeSubmit={(data) => {
-        let nivel = 'BAIXO'; 
+        let nivel = 'BAIXO';
 
         if (data.tipo === 'ADMINISTRADOR') {
           nivel = 'ALTO';
         } else if (data.tipo === 'PRODUTOR') {
           nivel = 'MEDIO';
         }
-          return {
-            ...data,
-            nivelPrivilegio: nivel,
-          };
-        }}
+        return {
+          ...data,
+          nivelPrivilegio: nivel,
+        };
+      }}
       columns={[
         { field: 'nome', label: 'Nome' },
         { field: 'email', label: 'E-mail' },

@@ -227,7 +227,7 @@ export default function ReceitasPage() {
         ...data,
         ingredientes: data.ingredientes 
           ? data.ingredientes.map((item: any) => ({
-              ingredienteId: item.idIngrediente,
+              ingredienteId: item.ingredienteId ?? item.idIngrediente,
               quantidade: item.quantidade,
             }))
           : [],
