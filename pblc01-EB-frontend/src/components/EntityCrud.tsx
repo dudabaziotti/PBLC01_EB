@@ -1,3 +1,5 @@
+//o EntityCrud é reaproveitado nas 4 classes de domínio, visando escalabilidade e flexibilidade no projeto
+
 import { useEffect, useState } from 'react';
 import {
   Box,

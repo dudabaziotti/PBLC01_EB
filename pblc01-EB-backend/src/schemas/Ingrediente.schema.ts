@@ -1,5 +1,3 @@
-import type { FastifyInstance } from 'fastify';
-
 const ingredienteMicronutrienteSchema = {
   type: 'object',
   required: ['nome', 'valor', 'unidade'],
