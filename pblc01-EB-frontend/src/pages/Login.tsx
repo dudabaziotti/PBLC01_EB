@@ -38,7 +38,6 @@ export default function Login() {
 
   return (
     <Box sx={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-      {/* Painel esquerdo com gradiente, igual ao CadastroUsuario.tsx */}
       <Box
         sx={{
           flex: { xs: 'none', md: '0 0 38%' },
@@ -120,7 +119,6 @@ export default function Login() {
         </Typography>
       </Box>
 
-      {/* Painel direito com o formulário */}
       <Box
         sx={{
           flex: 1,
